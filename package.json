@@ -1,0 +1,19 @@
+{
+  "name": "出网探测",
+  "name_en": "Out-of-Network",
+  "main": "index.js",
+  "icon": "soundcloud",
+  "version": "0.1",
+  "description": "检测目标访问外网情况",
+  "description_en": "Detect the target's access to the external network.",
+  "author": {
+    "name": "user",
+    "email": "user@u0u.us"
+  },
+  "category": "信息获取",
+  "category_en": "information",
+  "multiple": false,
+  "scripts": [
+    "php"
+  ]
+}
