@@ -16,6 +16,7 @@
   "scripts": [
     "php",
     "php4",
+    "jsp",
     "jspjs"
   ]
 }

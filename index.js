@@ -6,6 +6,7 @@ const tabbar = require('ui/tabbar'); // Tab库
 const LANG_T = antSword['language']['toastr']; // 通用通知提示
 
 const LANG = require('./language/'); // 插件语言库
+const Payload = require('./payload');
 /**
  * 插件类
 */
@@ -203,7 +204,8 @@ class Plugin {
           output.append("[-][UDP][ERROR]["+nameservers[i]+":53]["+ex.getMessage()+"]\\n");
         }
       };
-      checkDNS("qq.com");`
+      checkDNS("qq.com");`,
+      jsp: Payload.jsp,
     }
     if(shelltype=="php4"){
       return codes['php'];
