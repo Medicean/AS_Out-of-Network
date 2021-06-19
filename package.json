@@ -3,7 +3,7 @@
   "name_en": "Out-of-Network",
   "main": "index.js",
   "icon": "soundcloud",
-  "version": "0.1",
+  "version": "0.2",
   "description": "检测目标访问外网情况",
   "description_en": "Detect the target's access to the external network.",
   "author": {
@@ -14,6 +14,8 @@
   "category_en": "information",
   "multiple": false,
   "scripts": [
-    "php"
+    "php",
+    "php4",
+    "jspjs"
   ]
 }

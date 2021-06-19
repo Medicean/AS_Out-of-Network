@@ -120,12 +120,93 @@ class Plugin {
       if(stristr(urlencode(udpGet('9b540100000100000000000002717103636f6d0000010001','8.8.8.8','53')), 'qq%03com')) {
         echo "[+][UDP][Success][8.8.8.8:53]\\n";
       }else{
-        echo "[+][UDP][Fail][8.8.8.8:53]\\n";
+        echo "[-][UDP][Fail][8.8.8.8:53]\\n";
       }
       checkDNS("qq.com");
       `,
       asp: '',
-      aspx: ''
+      aspx: '',
+      jspjs: `
+      function bytesToHex(bytes) {
+        var h = "0123456789ABCDEF";
+        var sb = new StringBuilder(bytes.length * 2);
+        for (var i = 0; i < bytes.length; i++) {
+          sb.append(h.charAt((bytes[i] & 0xf0) >> 4));
+          sb.append(h.charAt((bytes[i] & 0x0f) >> 0));
+        }
+        return sb.toString();
+      };
+      function udpGet(b64msg,ip,port){
+        importPackage(Packages.java.net);
+        var socket = null;
+        socket = new DatagramSocket(0);
+        socket.setSoTimeout(30);
+        var host = InetAddress.getByName(ip);
+        var tempBytes = Base64DecodeToByte(b64msg);
+        var udpreq = new DatagramPacket(tempBytes, tempBytes.length, host, port);
+        var byteArray = Java.type("byte[]");
+        var udpresp = new DatagramPacket(new byteArray(1024), 1024);
+        socket.send(udpreq);
+        socket.receive(udpresp);
+        return bytesToHex(udpresp.getData());
+      };
+      function checkDNS(domain){
+        output.append("[*][DNS] Try to resolve "+ domain +" with system nameserver\\n");
+        try{
+          var hosts = InetAddress.getAllByName(domain);
+          if(hosts.length>0){
+            output.append("[+][DNS][Success]["+domain+"]\\n");
+            for(var i=0;i<hosts.length; i++){
+              output.append("\\t"+hosts[i]+"\\n");
+            }
+          }
+        }catch(ex){
+          output.append("[-][DNS][ERROR]["+domain+"]["+ex.getMessage()+"]\\n");
+        }
+      };
+      function checkHTTP() {
+        output.append("[*][HTTP] Try to send HTTP request\\n");
+        var ips = ['220.181.38.148', '39.156.69.79', 'www.baidu.com'];
+        for(var i=0; i<ips.length; i++){
+          var urlPath = "http://"+ips[i];
+          var url = new java.net.URL(urlPath);
+          try{
+            var connection = url.openConnection();
+            connection.setConnectTimeout(10000);
+            connection.setReadTimeout(10000);
+            connection.connect();
+            if(connection.getResponseCode()>0) {
+              output.append("[+][HTTP][Success]["+ urlPath +"]\\n");
+            }
+            connection.disconnect();
+            break;
+          }catch(ex){
+            output.append("[-][HTTP][Error]["+ urlPath +"]\\n");
+          }
+        }
+      };
+      checkHTTP();
+      output.append("[*][UDP] Try to send UDP request\\n");
+      var udppacket="m1QBAAABAAAAAAAAAnFxA2NvbQAAAQAB";
+      var nameservers = ["114.114.114.114", "223.5.5.5", "8.8.8.8", "9.9.9.9"];
+      for(var i=0;i<nameservers.length;i++){
+        var udpret = "";
+        try{
+          udpret = udpGet(udppacket, nameservers[i], 53);
+          if(udpret.indexOf("717103636F6D")>-1){
+            output.append("[+][UDP][Success]["+nameservers[i]+":53]\\n");
+            break;
+          } else {
+            output.append("[-][UDP][Fail]["+nameservers[i]+":53]\\n");
+          }
+        }catch(ex){
+          output.append("[-][UDP][ERROR]["+nameservers[i]+":53]["+ex.getMessage()+"]\\n");
+        }
+      };
+      checkDNS("qq.com");`
+    }
+    if(shelltype=="php4"){
+      return codes['php'];
     }
     return codes[shelltype];
   }
